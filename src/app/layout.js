@@ -1,5 +1,4 @@
 import "./globals.css";
-import Layout from "./components/Layout";
 
 export const metadata = {
   title: "NeuraFarm - Deteksi Gulma dan Penyakit",
@@ -13,7 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <body>
-        <Layout>{children}</Layout>
+        {children}
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Alata, Agbalumo } from "next/font/google";
 
@@ -20,213 +21,118 @@ export default function Layout({ children }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Fitur", href: "/pengertian" },
-    { name: "Leafguard", href: "/kruskal" },
-    { name: "Neuraweed", href: "/prim" },
+    { name: "HOME", href: "/" },
+    { name: "FITUR", href: "/fitur" },
+    { name: "LEAFGUARD", href: "/Leafguard" },
+    { name: "NEURAWEED", href: "/Neuraweed" },
   ];
 
   return (
-    <div className="bg-[#5CCE8F] min-h-screen flex flex-col">
-      {""}
-      <nav class="bg-[#139186]">
-        <div class="bg-white mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div class="bg-black relative flex h-16 items-center justify-between">
-            <div class="bg-pink-500 absolute inset-y-0 left-0 flex items-center sm:hidden">
-              {/* Mobile menu button */}
-              <button
-                type="button"
-                aria-controls="mobile-menu"
-                aria-expanded="false"
-                class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset"
-              >
-                <span class="absolute -inset-0.5"></span>
-                <span class="sr-only">Open main menu</span>
-                {/* Icon when menu is closed. Menu open: "hidden", Menu closed: "block" */}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  data-slot="icon"
-                  aria-hidden="true"
-                  class="block size-6"
-                >
-                  <path
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                {/* Icon when menu is open. Menu open: "block", Menu closed: "hidden" */}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  data-slot="icon"
-                  aria-hidden="true"
-                  class="hidden size-6"
-                >
-                  <path
-                    d="M6 18 18 6M6 6l12 12"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
+    <div className={`min-h-screen ${alata.className}`}>
+      {/* Navigation */}
+      <nav 
+        className="relative z-50"
+        style={{
+          background: `linear-gradient(90deg, #5CCE8F 0%, #139186 100%)`
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Image
+                src="/navbar-logo.png"
+                alt="NeuraFarm"
+                width={50}
+                height={50}
+                className="h-10 w-auto mr-3"
+              />
+              <span className={`text-white text-2xl font-bold ${agbalumo.className}`}>
+                NeuraFarm
+              </span>
             </div>
-            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-              <div class="flex shrink-0 items-center">
-                <img
-                  src="../../../public/navbar-logo.png"
-                  alt="NeuraFarm"
-                  class="h-8 w-auto"
-                />
-              </div>
-              <div class="hidden sm:ml-6 sm:block">
-                <div class="flex space-x-4">
-                  <a
-                    href="#"
-                    aria-current="page"
-                    class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                  >
-                    Dashboard
-                  </a>
-                  <a
-                    href="#"
-                    class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Team
-                  </a>
-                  <a
-                    href="#"
-                    class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Projects
-                  </a>
-                  <a
-                    href="#"
-                    class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Calendar
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
-                type="button"
-                class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
-              >
-                <span class="absolute -inset-1.5"></span>
-                <span class="sr-only">View notifications</span>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  data-slot="icon"
-                  aria-hidden="true"
-                  class="size-6"
-                >
-                  <path
-                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
 
-              <div class="relative ml-3">
-                <div>
-                  <button
-                    id="user-menu-button"
-                    type="button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
-                    class="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800"
+            {/* Desktop Navigation */}
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-white hover:text-gray-200 px-3 py-2 text-sm font-medium transition-colors duration-200"
                   >
-                    <span class="absolute -inset-1.5"></span>
-                    <span class="sr-only">Open user menu</span>
-                    <img
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                      class="size-8 rounded-full"
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Login Button */}
+            <div className="hidden md:block">
+              <button className="bg-white text-[#139186] px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-200">
+                LOG IN
+              </button>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-white hover:text-gray-200 focus:outline-none focus:text-gray-200"
+              >
+                <svg
+                  className="h-6 w-6"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  {isMenuOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
                     />
-                  </button>
-                </div>
-                <div
-                  role="menu"
-                  tabindex="-1"
-                  aria-labelledby="user-menu-button"
-                  aria-orientation="vertical"
-                  class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-hidden"
-                >
-                  <a
-                    id="user-menu-item-0"
-                    role="menuitem"
-                    href="#"
-                    tabindex="-1"
-                    class="block px-4 py-2 text-sm text-gray-700"
-                  >
-                    Your Profile
-                  </a>
-                  <a
-                    id="user-menu-item-1"
-                    role="menuitem"
-                    href="#"
-                    tabindex="-1"
-                    class="block px-4 py-2 text-sm text-gray-700"
-                  >
-                    Settings
-                  </a>
-                  <a
-                    id="user-menu-item-2"
-                    role="menuitem"
-                    href="#"
-                    tabindex="-1"
-                    class="block px-4 py-2 text-sm text-gray-700"
-                  >
-                    Sign out
-                  </a>
-                </div>
-              </div>
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </button>
             </div>
           </div>
-        </div>
 
-        {/* Mobile menu, show/hide based on menu state. */}
-        <div id="mobile-menu" class="sm:hidden">
-          <div class="space-y-1 px-2 pt-2 pb-3">
-            <a
-              href="#"
-              aria-current="page"
-              class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#"
-              class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Team
-            </a>
-            <a
-              href="#"
-              class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Projects
-            </a>
-            <a
-              href="#"
-              class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Calendar
-            </a>
-          </div>
+          {/* Mobile menu */}
+          {isMenuOpen && (
+            <div className="md:hidden">
+              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-white hover:text-gray-200 block px-3 py-2 text-base font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                <button className="bg-white text-[#139186] px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-200 mt-4">
+                  LOG IN
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
+
+      {/* Main Content */}
+      <main className="flex-1">
+        {children}
+      </main>
     </div>
   );
 }
