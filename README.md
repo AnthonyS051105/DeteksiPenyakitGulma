@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NeuraFarm - Platform untuk Mempermudah Petani
 
-## Getting Started
+Platform digital yang menyediakan solusi pertanian masa kini dengan teknologi AI untuk deteksi penyakit tanaman dan gulma.
 
-First, run the development server:
+## Fitur
+
+- **Homepage dengan Slider**: Hero section dengan 3 slide yang dapat digerakkan secara manual atau otomatis
+- **Responsive Design**: Tampilan yang optimal di desktop dan mobile
+- **Navbar Modern**: Navigasi dengan logo NeuraFarm dan menu responsif
+- **Animasi Smooth**: Transisi yang halus antar slide dan hover effects
+
+## Teknologi yang Digunakan
+
+- **Next.js 15.3.5**: React framework dengan App Router
+- **Tailwind CSS 4.0**: Utility-first CSS framework
+- **Google Fonts**: 
+  - Alata (untuk teks umum)
+  - Agbalumo (untuk logo)
+
+## Warna yang Digunakan
+
+- **Navbar Gradient**: `#5CCE8F` ke `#139186`
+- **Background Slides**: 
+  - Slide 1: Pattern hijau menyerupai padi
+  - Slide 2: Gradient biru teknologi
+  - Slide 3: Gradient kuning/emas
+
+## Struktur Komponen
+
+### Logo Component
+- SVG icon pohon dengan 3 titik (sesuai design)
+- Font Agbalumo untuk teks "NeuraFarm"
+
+### Navbar Component
+- Logo di sebelah kiri
+- Menu navigasi (HOME, FITUR, LEAFGUARD, NEURAWEED)
+- Tombol LOG IN di sebelah kanan
+- Hamburger menu untuk mobile
+
+### HeroSlider Component
+- 3 slide dengan konten berbeda
+- Navigation arrows (kiri/kanan)
+- Slide indicators di bawah
+- Auto-slide setiap 5 detik
+- Smooth transitions
+
+## Cara Menjalankan
 
 ```bash
+# Install dependencies
+npm install
+
+# Jalankan development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Buka http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Fitur Slider
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Manual Navigation**: Klik arrow kiri/kanan untuk berpindah slide
+- **Indicator Navigation**: Klik dot indicator untuk langsung ke slide tertentu
+- **Auto-slide**: Otomatis berpindah slide setiap 5 detik
+- **Responsive**: Bekerja dengan baik di semua ukuran layar
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Slide Content
 
-## Learn More
+1. **Slide 1**: Pengenalan platform NeuraFarm
+2. **Slide 2**: Teknologi AI dan machine learning
+3. **Slide 3**: Dukungan untuk petani Indonesia
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Setiap slide memiliki background yang berbeda dan konten yang relevan dengan misi NeuraFarm dalam membantu petani Indonesia.
