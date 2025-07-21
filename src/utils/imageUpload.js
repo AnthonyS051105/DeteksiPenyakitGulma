@@ -73,7 +73,7 @@ export const processWithLeafGuardAI = async (imageUrl) => {
     console.log('Processing with LeafGuard AI:', imageUrl);
     console.log('AI Service URL:', aiServiceUrl);
     
-    const response = await fetch(`${aiServiceUrl}/predict-disease/link`, {
+    const response = await fetch(`${aiServiceUrl}/predict-disease/link/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
     console.log('Processing with NeuraWeed AI:', imageUrl);
     console.log('AI Service URL:', aiServiceUrl);
     
-    const response = await fetch(`${aiServiceUrl}/detect-weed/link`, {
+    const response = await fetch(`${aiServiceUrl}/detect-weed/link/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -228,8 +228,8 @@ export const checkAIServiceHealth = async () => {
   console.log('Checking AI service health at:', aiServiceUrl);
 
   try {
-    // First try to check if the service is running with a simple GET request
-    const response = await fetch(`${aiServiceUrl}/`, {
+    // Try to check the docs endpoint which should exist
+    const response = await fetch(`${aiServiceUrl}/docs`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -240,9 +240,19 @@ export const checkAIServiceHealth = async () => {
 
     console.log('Health check response status:', response.status);
 
-    // If we get any response (even 404), it means the service is running
-    if (response.status < 500) {
+    // If we get 200 or 307 (redirect), service is running
+    if (response.status === 200 || response.status === 307) {
       return { success: true, status: 'AI service is running and accessible' };
+    } else if (response.status === 404) {
+      // 404 on /docs might be normal, try root endpoint
+      const rootResponse = await fetch(`${aiServiceUrl}/`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(5000)
+      });
+      if (rootResponse.status < 500) {
+        return { success: true, status: 'AI service is running' };
+      }
+      return { success: false, error: `Service returned status: ${response.status}` };
     } else {
       return { success: false, error: `Service returned status: ${response.status}` };
     }
