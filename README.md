@@ -21,11 +21,24 @@ NEXT_PUBLIC_AI_SERVICE_URL=https://nafalrust-plantweb.hf.space
 3. Get your API key from the dashboard
 4. Replace `your_imgbb_api_key_here` with your actual API key
 
+### Testing ImgBB Integration:
+You can test if your ImgBB API key is working by:
+1. Opening browser developer tools (F12)
+2. Going to Console tab
+3. Uploading an image on LeafGuard or NeuraWeed
+4. Check the console logs for ImgBB upload status
+
 ### AI Service Integration:
-The application integrates with your deployed AI service at `https://nafalrust-plantweb.hf.space` with the following endpoints:
+The application integrates with your deployed AI service with the following endpoints:
 - `/predict-disease/link` - For LeafGuard (disease detection)
 - `/detect-weed/link` - For NeuraWeed (weed detection)
-- `/health` - For service health monitoring
+- `/` - For service health monitoring
+
+### Troubleshooting AI Service Connection:
+1. **Service appears offline**: Hugging Face Spaces may go to sleep after inactivity. Try accessing your space URL directly first.
+2. **CORS errors**: This is normal for health checks, but actual API calls should work.
+3. **Timeout errors**: The service might be doing a "cold start" - wait a few seconds and try again.
+4. **Check logs**: Open browser developer tools to see detailed error messages.
 
 ## Getting Started
 
