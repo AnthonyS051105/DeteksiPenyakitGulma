@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Alata, Agbalumo } from "next/font/google";
+import { uploadToImgBB, processWithAI } from "../../utils/imageUpload";
 
 const alata = Alata({
   subsets: ["latin"],
@@ -73,16 +74,52 @@ export default function Leafguard() {
     if (!selectedFile) return;
 
     setIsProcessing(true);
-
-    // Simulate processing time
-    setTimeout(() => {
+    
+    try {
+      // Step 1: Upload original image to ImgBB
+      console.log('Uploading image to ImgBB...');
+      const uploadedImageUrl = await uploadToImgBB(selectedFile);
+      console.log('Image uploaded successfully:', uploadedImageUrl);
+      
+      // Step 2: Process with AI service
+      console.log('Processing with AI service...');
+      const aiResult = await processWithAI(uploadedImageUrl, 'leafguard');
+      console.log('AI processing result:', aiResult);
+      
+      // Step 3: Handle the AI response
+      if (aiResult.success) {
+        // If AI service returns processed image URL, use it
+        if (aiResult.processed_image_url) {
+          setProcessedImageUrl(aiResult.processed_image_url);
+        } else {
+          // Otherwise use the original image
+          setProcessedImageUrl(uploadedImageUrl);
+        }
+        
+        // Set analysis result from AI
+        const analysisText = aiResult.prediction 
+          ? `Terdeteksi: ${aiResult.prediction}. ${aiResult.description || ''} ${aiResult.recommendation || ''}`
+          : "Analisis berhasil dilakukan. Silakan periksa hasil deteksi.";
+        
+        setAnalysisResult(analysisText);
+        setIsProcessed(true);
+      } else {
+        throw new Error(aiResult.message || 'AI processing failed');
+      }
+      
+    } catch (error) {
+      console.error('Processing error:', error);
+      
+      // Fallback to original behavior if there's an error
       setProcessedImageUrl(previewUrl);
       setAnalysisResult(
-        "Terdeteksi penyakit bercak daun dengan tingkat keparahan sedang. Rekomendasi: Gunakan fungisida berbahan aktif mankozeb dan lakukan pemangkasan daun yang terinfeksi. Tingkatkan sirkulasi udara di sekitar tanaman untuk mencegah penyebaran lebih lanjut."
+        `Terjadi kesalahan dalam pemrosesan: ${error.message}. Menampilkan gambar asli sebagai fallback.`
       );
-      setIsProcessing(false);
       setIsProcessed(true);
-    }, 3000);
+    } finally {
+      setIsProcessing(false);
+    }
+
   };
 
   // Handle mouse events for drag
