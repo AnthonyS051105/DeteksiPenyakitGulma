@@ -11,6 +11,7 @@ export default function Leafguard() {
   const [processedImageUrl, setProcessedImageUrl] = useState(null);
   const [analysisResult, setAnalysisResult] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isDetailViewOpen, setIsDetailViewOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (file) => {
@@ -21,6 +22,7 @@ export default function Leafguard() {
       setIsProcessed(false);
       setProcessedImageUrl(null);
       setAnalysisResult("");
+      setIsDetailViewOpen(false);
     }
   };
 
@@ -56,11 +58,74 @@ export default function Leafguard() {
       // For demonstration, we'll use the original image with a placeholder effect
       // In real implementation, this would be the actual processed/segmented image
       setProcessedImageUrl(previewUrl); // Using the input image as placeholder
-      setAnalysisResult("Terdeteksi penyakit bercak daun dengan tingkat keparahan sedang. Rekomendasi: Gunakan fungisida berbahan aktif mankozeb dan lakukan pemangkasan daun yang terinfeksi. Tingkatkan sirkulasi udara di sekitar tanaman.");
+      setAnalysisResult("Terdeteksi penyakit bercak daun dengan tingkat keparahan sedang. Rekomendasi: Gunakan fungisida berbahan aktif mankozeb dan lakukan pemangkasan daun yang terinfeksi. Tingkatkan sirkulasi udara di sekitar tanaman untuk mencegah penyebaran lebih lanjut.");
       setIsProcessing(false);
       setIsProcessed(true);
     }, 3000);
   };
+
+  const handlePullUp = () => {
+    setIsDetailViewOpen(true);
+  };
+
+  const handleCloseDetailView = () => {
+    setIsDetailViewOpen(false);
+  };
+
+  // Detail view overlay
+  if (isDetailViewOpen) {
+    return (
+      <div className="fixed inset-0 bg-[#F5F5F5] z-50 overflow-auto">
+        <div className="min-h-screen py-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header with close button */}
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-[#139186]" style={{ fontFamily: 'cursive' }}>
+                LeafGuard - Hasil Analisa
+              </h1>
+              <button
+                onClick={handleCloseDetailView}
+                className="text-[#139186] hover:text-[#0F7A70] text-2xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Full Preview Output */}
+            <div className="bg-[#139186] rounded-lg p-6">
+              <h3 className="text-white text-xl font-semibold mb-6 text-center">
+                PREVIEW OUTPUT
+              </h3>
+              
+              {/* Large processed image */}
+              <div className="bg-white rounded-lg p-6 mb-6">
+                {processedImageUrl && (
+                  <div className="relative w-full h-96">
+                    <Image
+                      src={processedImageUrl}
+                      alt="Hasil Segmentasi"
+                      fill
+                      className="object-contain rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Analysis description */}
+              <div className="bg-[#0F7A70] rounded-lg p-6">
+                <h4 className="text-white text-lg font-semibold mb-4 text-center">
+                  DESKRIPSI HASIL DETEKSI
+                </h4>
+                <p className="text-white leading-relaxed text-center">
+                  {analysisResult}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] py-8">
@@ -141,8 +206,8 @@ export default function Leafguard() {
           </div>
 
           {/* Preview Sections */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Preview Input */}
+          <div className={`grid gap-8 mb-8 ${isProcessed ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+            {/* Preview Input - Always shown */}
             <div>
               <h3 className="text-lg font-semibold text-gray-700 mb-4">Preview Input</h3>
               <div
@@ -171,26 +236,28 @@ export default function Leafguard() {
               </div>
             </div>
 
-            {/* Preview Output */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Preview Output</h3>
-              <div className="w-full h-80 border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg flex items-center justify-center">
-                {processedImageUrl ? (
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={processedImageUrl}
-                      alt="Processed Result"
-                      fill
-                      className="object-contain rounded-lg"
-                    />
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-500">
-                    <p>Hasil segmentasi akan ditampilkan di sini</p>
-                  </div>
-                )}
+            {/* Preview Output - Only shown after processing */}
+            {isProcessed && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Preview Output</h3>
+                <div className="w-full h-80 border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg flex items-center justify-center">
+                  {processedImageUrl ? (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={processedImageUrl}
+                        alt="Processed Result"
+                        fill
+                        className="object-contain rounded-lg"
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-500">
+                      <p>Hasil segmentasi akan ditampilkan di sini</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Process Button */}
@@ -207,42 +274,24 @@ export default function Leafguard() {
               {isProcessing ? 'MEMPROSES...' : isProcessed ? 'PROSES BERHASIL' : 'PROSES'}
             </button>
           </div>
+        </div>
 
-          {/* Results Section */}
-          {isProcessed && (
-            <div className="bg-[#139186] rounded-lg p-6">
-              <h3 className="text-white text-lg font-semibold mb-4 text-center">
-                PREVIEW OUTPUT
-              </h3>
-              <div className="bg-white rounded-lg p-6 mb-4 min-h-[200px]">
-                {processedImageUrl && (
-                  <div className="relative w-full h-48 mb-4">
-                    <Image
-                      src={processedImageUrl}
-                      alt="Detailed Result"
-                      fill
-                      className="object-contain rounded-lg"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="bg-[#0F7A70] rounded-lg p-4">
-                <p className="text-white text-center leading-relaxed">
-                  {analysisResult}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Analysis Description */}
-          {isProcessed && (
-            <div className="mt-8 bg-[#139186] rounded-lg p-6">
+        {/* Pull-up section - Only shown after processing */}
+        {isProcessed && (
+          <div className="mt-8">
+            <div 
+              className="bg-[#139186] rounded-lg p-6 cursor-pointer hover:bg-[#0F7A70] transition-colors"
+              onClick={handlePullUp}
+            >
               <p className="text-white text-center font-semibold">
                 TARIK UNTUK DESKRIPSI HASIL DETEKSI
               </p>
+              <div className="text-center mt-2">
+                <span className="text-white text-xl">⬆️</span>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
