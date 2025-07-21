@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
 export default function Leafguard() {
@@ -11,8 +11,16 @@ export default function Leafguard() {
   const [processedImageUrl, setProcessedImageUrl] = useState(null);
   const [analysisResult, setAnalysisResult] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
-  const [isDetailViewOpen, setIsDetailViewOpen] = useState(false);
+  const [pullUpHeight, setPullUpHeight] = useState(80); // Starting height in pixels
+  const [isDragging, setIsDragging] = useState(false);
+  const [startY, setStartY] = useState(0);
+  const [initialHeight, setInitialHeight] = useState(80);
   const fileInputRef = useRef(null);
+  const pullUpRef = useRef(null);
+
+  const MIN_HEIGHT = 80; // Minimum height (collapsed)
+  const MAX_HEIGHT = 600; // Maximum height (expanded)
+  const SNAP_THRESHOLD = 50; // Threshold for snapping
 
   const handleFileSelect = (file) => {
     if (file && file.type.startsWith('image/')) {
@@ -22,7 +30,7 @@ export default function Leafguard() {
       setIsProcessed(false);
       setProcessedImageUrl(null);
       setAnalysisResult("");
-      setIsDetailViewOpen(false);
+      setPullUpHeight(MIN_HEIGHT);
     }
   };
 
@@ -55,80 +63,84 @@ export default function Leafguard() {
     
     // Simulate processing time
     setTimeout(() => {
-      // For demonstration, we'll use the original image with a placeholder effect
-      // In real implementation, this would be the actual processed/segmented image
-      setProcessedImageUrl(previewUrl); // Using the input image as placeholder
+      setProcessedImageUrl(previewUrl);
       setAnalysisResult("Terdeteksi penyakit bercak daun dengan tingkat keparahan sedang. Rekomendasi: Gunakan fungisida berbahan aktif mankozeb dan lakukan pemangkasan daun yang terinfeksi. Tingkatkan sirkulasi udara di sekitar tanaman untuk mencegah penyebaran lebih lanjut.");
       setIsProcessing(false);
       setIsProcessed(true);
     }, 3000);
   };
 
-  const handlePullUp = () => {
-    setIsDetailViewOpen(true);
+  // Handle mouse events for drag
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartY(e.clientY);
+    setInitialHeight(pullUpHeight);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleCloseDetailView = () => {
-    setIsDetailViewOpen(false);
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    
+    const deltaY = startY - e.clientY; // Inverted because pulling up decreases Y
+    const newHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, initialHeight + deltaY));
+    setPullUpHeight(newHeight);
   };
 
-  // Detail view overlay
-  if (isDetailViewOpen) {
-    return (
-      <div className="fixed inset-0 bg-[#F5F5F5] z-50 overflow-auto">
-        <div className="min-h-screen py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header with close button */}
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold text-[#139186]" style={{ fontFamily: 'cursive' }}>
-                LeafGuard - Hasil Analisa
-              </h1>
-              <button
-                onClick={handleCloseDetailView}
-                className="text-[#139186] hover:text-[#0F7A70] text-2xl font-bold"
-              >
-                ✕
-              </button>
-            </div>
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    
+    // Snap to nearest position
+    if (pullUpHeight < MIN_HEIGHT + SNAP_THRESHOLD) {
+      setPullUpHeight(MIN_HEIGHT);
+    } else if (pullUpHeight > MAX_HEIGHT - SNAP_THRESHOLD) {
+      setPullUpHeight(MAX_HEIGHT);
+    } else if (pullUpHeight < (MIN_HEIGHT + MAX_HEIGHT) / 2) {
+      setPullUpHeight(MIN_HEIGHT);
+    } else {
+      setPullUpHeight(MAX_HEIGHT);
+    }
+    
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
 
-            {/* Full Preview Output */}
-            <div className="bg-[#139186] rounded-lg p-6">
-              <h3 className="text-white text-xl font-semibold mb-6 text-center">
-                PREVIEW OUTPUT
-              </h3>
-              
-              {/* Large processed image */}
-              <div className="bg-white rounded-lg p-6 mb-6">
-                {processedImageUrl && (
-                  <div className="relative w-full h-96">
-                    <Image
-                      src={processedImageUrl}
-                      alt="Hasil Segmentasi"
-                      fill
-                      className="object-contain rounded-lg"
-                    />
-                  </div>
-                )}
-              </div>
+  // Handle touch events for mobile
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartY(e.touches[0].clientY);
+    setInitialHeight(pullUpHeight);
+  };
 
-              {/* Analysis description */}
-              <div className="bg-[#0F7A70] rounded-lg p-6">
-                <h4 className="text-white text-lg font-semibold mb-4 text-center">
-                  DESKRIPSI HASIL DETEKSI
-                </h4>
-                <p className="text-white leading-relaxed text-center">
-                  {analysisResult}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    
+    const deltaY = startY - e.touches[0].clientY;
+    const newHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, initialHeight + deltaY));
+    setPullUpHeight(newHeight);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    
+    // Snap to nearest position
+    if (pullUpHeight < MIN_HEIGHT + SNAP_THRESHOLD) {
+      setPullUpHeight(MIN_HEIGHT);
+    } else if (pullUpHeight > MAX_HEIGHT - SNAP_THRESHOLD) {
+      setPullUpHeight(MAX_HEIGHT);
+    } else if (pullUpHeight < (MIN_HEIGHT + MAX_HEIGHT) / 2) {
+      setPullUpHeight(MIN_HEIGHT);
+    } else {
+      setPullUpHeight(MAX_HEIGHT);
+    }
+  };
+
+  // Calculate content opacity based on height
+  const contentOpacity = Math.max(0, (pullUpHeight - MIN_HEIGHT) / (MAX_HEIGHT - MIN_HEIGHT));
+  const isExpanded = pullUpHeight > (MIN_HEIGHT + MAX_HEIGHT) / 2;
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] py-8">
+    <div className="min-h-screen bg-[#F5F5F5] py-8 relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12">
@@ -181,7 +193,7 @@ export default function Leafguard() {
         </div>
 
         {/* Upload and Process Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           {/* File Upload Section */}
           <div className="mb-8">
             <div className="flex gap-4 mb-4">
@@ -261,7 +273,7 @@ export default function Leafguard() {
           </div>
 
           {/* Process Button */}
-          <div className="text-center mb-8">
+          <div className="text-center">
             <button
               onClick={handleProcess}
               disabled={!selectedFile || isProcessing}
@@ -275,24 +287,81 @@ export default function Leafguard() {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Pull-up section - Only shown after processing */}
-        {isProcessed && (
-          <div className="mt-8">
-            <div 
-              className="bg-[#139186] rounded-lg p-6 cursor-pointer hover:bg-[#0F7A70] transition-colors"
-              onClick={handlePullUp}
-            >
-              <p className="text-white text-center font-semibold">
-                TARIK UNTUK DESKRIPSI HASIL DETEKSI
-              </p>
-              <div className="text-center mt-2">
-                <span className="text-white text-xl">⬆️</span>
-              </div>
+      {/* Draggable Pull-up Panel - Only shown after processing */}
+      {isProcessed && (
+        <div
+          ref={pullUpRef}
+          className="fixed bottom-0 left-0 right-0 bg-[#139186] rounded-t-3xl shadow-2xl transition-all duration-300 ease-out z-40"
+          style={{
+            height: `${pullUpHeight}px`,
+            transform: isDragging ? 'none' : 'translateY(0)',
+          }}
+        >
+          {/* Drag Handle */}
+          <div
+            className="w-full p-4 cursor-grab active:cursor-grabbing"
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="w-12 h-1 bg-white/40 rounded-full mx-auto mb-2"></div>
+            <p className="text-white text-center font-semibold">
+              {isExpanded ? 'TARIK KE BAWAH UNTUK TUTUP' : 'TARIK UNTUK DESKRIPSI HASIL DETEKSI'}
+            </p>
+            <div className="text-center mt-1">
+              <span className="text-white text-lg">
+                {isExpanded ? '⬇️' : '⬆️'}
+              </span>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Content Area */}
+          <div 
+            className="px-6 pb-6 overflow-hidden"
+            style={{ 
+              opacity: contentOpacity,
+              height: `${pullUpHeight - 80}px`
+            }}
+          >
+            {pullUpHeight > MIN_HEIGHT + 50 && (
+              <>
+                <h3 className="text-white text-lg font-semibold mb-4 text-center">
+                  PREVIEW OUTPUT
+                </h3>
+                
+                {/* Processed Image */}
+                <div className="bg-white rounded-lg p-4 mb-4 overflow-hidden">
+                  {processedImageUrl && (
+                    <div className="relative w-full h-48">
+                      <Image
+                        src={processedImageUrl}
+                        alt="Hasil Segmentasi"
+                        fill
+                        className="object-contain rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Analysis Description */}
+                {pullUpHeight > 300 && (
+                  <div className="bg-[#0F7A70] rounded-lg p-4">
+                    <h4 className="text-white text-sm font-semibold mb-2 text-center">
+                      DESKRIPSI HASIL DETEKSI
+                    </h4>
+                    <p className="text-white text-sm leading-relaxed text-center">
+                      {analysisResult}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
