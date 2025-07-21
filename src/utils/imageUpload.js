@@ -178,18 +178,21 @@ export const checkAIServiceHealth = async () => {
   }
 
   try {
-    const response = await fetch(`${aiServiceUrl}/health`, {
+    // Try to access the main page first since /health endpoint might not exist
+    const response = await fetch(`${aiServiceUrl}/`, {
       method: 'GET',
-      timeout: 5000,
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      },
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      return { success: true, status: result };
+    if (response.ok || response.status === 200) {
+      return { success: true, status: 'AI Service is accessible' };
     } else {
-      return { success: false, error: `Health check failed: ${response.status}` };
+      return { success: false, error: `Service returned status: ${response.status}` };
     }
   } catch (error) {
-    return { success: false, error: error.message };
+    console.error('AI Service health check error:', error);
+    return { success: false, error: `Connection failed: ${error.message}` };
   }
 };

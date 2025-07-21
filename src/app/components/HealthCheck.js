@@ -12,8 +12,10 @@ export default function HealthCheck() {
       setIsLoading(true);
       try {
         const status = await checkAIServiceHealth();
+        console.log('Health check result:', status);
         setHealthStatus(status);
       } catch (error) {
+        console.error('Health check error:', error);
         setHealthStatus({ success: false, error: error.message });
       } finally {
         setIsLoading(false);
@@ -22,8 +24,8 @@ export default function HealthCheck() {
 
     checkHealth();
     
-    // Check health every 30 seconds
-    const interval = setInterval(checkHealth, 30000);
+    // Check health every 60 seconds (less frequent to avoid rate limiting)
+    const interval = setInterval(checkHealth, 60000);
     
     return () => clearInterval(interval);
   }, []);
@@ -42,7 +44,7 @@ export default function HealthCheck() {
         ? 'bg-green-100 border border-green-400 text-green-700' 
         : 'bg-red-100 border border-red-400 text-red-700'
     }`}>
-      {healthStatus?.success ? '✅ AI Service Online' : '❌ AI Service Offline'}
+      {healthStatus?.success ? '✅ AI Service Online' : `❌ AI Service Offline${healthStatus?.error ? ': ' + healthStatus.error : ''}`}
     </div>
   );
 }
