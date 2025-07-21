@@ -9,7 +9,7 @@ export const uploadToImgBB = async (imageFile) => {
   const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
   
   if (!apiKey) {
-    throw new Error('ImgBB API key not configured');
+    throw new Error('ImgBB API key not configured. Please add NEXT_PUBLIC_IMGBB_API_KEY to your environment variables.');
   }
 
   const formData = new FormData();
@@ -25,34 +25,33 @@ export const uploadToImgBB = async (imageFile) => {
     const data = await response.json();
     
     if (data.success) {
+      console.log('Image uploaded successfully to ImgBB:', data.data.url);
       return data.data.url;
     } else {
-      throw new Error(data.error?.message || 'Failed to upload image');
+      throw new Error(data.error?.message || 'Failed to upload image to ImgBB');
     }
   } catch (error) {
     console.error('ImgBB upload error:', error);
-    throw error;
+    throw new Error(`ImgBB upload failed: ${error.message}`);
   }
 };
 
 /**
- * Process image with AI service
+ * Process image with AI service for disease detection (LeafGuard)
  * @param {string} imageUrl - URL of the image to process
- * @param {string} serviceType - 'leafguard' or 'neuraweed'
  * @returns {Promise<Object>} - Returns AI processing result
  */
-export const processWithAI = async (imageUrl, serviceType) => {
+export const processWithLeafGuardAI = async (imageUrl) => {
   const aiServiceUrl = process.env.NEXT_PUBLIC_AI_SERVICE_URL;
   
   if (!aiServiceUrl) {
-    throw new Error('AI Service URL not configured');
+    throw new Error('AI Service URL not configured. Please add NEXT_PUBLIC_AI_SERVICE_URL to your environment variables.');
   }
 
-  // Determine endpoint based on service type
-  const endpoint = serviceType === 'leafguard' ? '/predict/disease' : '/predict/weed';
-  
   try {
-    const response = await fetch(`${aiServiceUrl}${endpoint}`, {
+    console.log('Processing with LeafGuard AI:', imageUrl);
+    
+    const response = await fetch(`${aiServiceUrl}/predict-disease/link`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,14 +62,89 @@ export const processWithAI = async (imageUrl, serviceType) => {
     });
 
     if (!response.ok) {
-      throw new Error(`AI Service error: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`AI Service error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
-    return result;
+    console.log('LeafGuard AI result:', result);
+    
+    return {
+      success: true,
+      prediction: result.result || result.prediction || 'Tidak terdeteksi penyakit',
+      confidence: result.confidence || null,
+      description: result.description || 'Analisis penyakit daun telah selesai.',
+      recommendation: result.recommendation || 'Silakan konsultasikan dengan ahli pertanian untuk penanganan lebih lanjut.',
+      processed_image_url: result.processed_image_url || null,
+      raw_result: result
+    };
   } catch (error) {
-    console.error('AI Service error:', error);
-    throw error;
+    console.error('LeafGuard AI processing error:', error);
+    throw new Error(`AI processing failed: ${error.message}`);
+  }
+};
+
+/**
+ * Process image with AI service for weed detection (NeuraWeed)
+ * @param {string} imageUrl - URL of the image to process
+ * @returns {Promise<Object>} - Returns AI processing result
+ */
+export const processWithNeuraWeedAI = async (imageUrl) => {
+  const aiServiceUrl = process.env.NEXT_PUBLIC_AI_SERVICE_URL;
+  
+  if (!aiServiceUrl) {
+    throw new Error('AI Service URL not configured. Please add NEXT_PUBLIC_AI_SERVICE_URL to your environment variables.');
+  }
+
+  try {
+    console.log('Processing with NeuraWeed AI:', imageUrl);
+    
+    const response = await fetch(`${aiServiceUrl}/detect-weed/link`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        image_url: imageUrl,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`AI Service error: ${response.status} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('NeuraWeed AI result:', result);
+    
+    return {
+      success: true,
+      prediction: result.result || result.prediction || 'Tidak terdeteksi gulma',
+      confidence: result.confidence || null,
+      description: result.description || 'Analisis deteksi gulma telah selesai.',
+      recommendation: result.recommendation || 'Silakan lakukan pembersihan gulma jika diperlukan.',
+      processed_image_url: result.processed_image_url || null,
+      raw_result: result
+    };
+  } catch (error) {
+    console.error('NeuraWeed AI processing error:', error);
+    throw new Error(`AI processing failed: ${error.message}`);
+  }
+};
+
+/**
+ * Legacy function for backward compatibility
+ * @param {string} imageUrl - URL of the image to process
+ * @param {string} serviceType - 'leafguard' or 'neuraweed'
+ * @returns {Promise<Object>} - Returns AI processing result
+ */
+export const processWithAI = async (imageUrl, serviceType) => {
+  if (serviceType === 'leafguard') {
+    return await processWithLeafGuardAI(imageUrl);
+  } else if (serviceType === 'neuraweed') {
+    return await processWithNeuraWeedAI(imageUrl);
+  } else {
+    throw new Error(`Unknown service type: ${serviceType}`);
   }
 };
 
@@ -90,4 +164,32 @@ export const base64ToBlob = (base64Data, contentType = 'image/jpeg') => {
   
   const byteArray = new Uint8Array(byteNumbers);
   return new Blob([byteArray], { type: contentType });
+};
+
+/**
+ * Health check for AI service
+ * @returns {Promise<Object>} - Returns health status
+ */
+export const checkAIServiceHealth = async () => {
+  const aiServiceUrl = process.env.NEXT_PUBLIC_AI_SERVICE_URL;
+  
+  if (!aiServiceUrl) {
+    return { success: false, error: 'AI Service URL not configured' };
+  }
+
+  try {
+    const response = await fetch(`${aiServiceUrl}/health`, {
+      method: 'GET',
+      timeout: 5000,
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return { success: true, status: result };
+    } else {
+      return { success: false, error: `Health check failed: ${response.status}` };
+    }
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };

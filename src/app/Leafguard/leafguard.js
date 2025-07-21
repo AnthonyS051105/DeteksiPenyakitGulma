@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Alata, Agbalumo } from "next/font/google";
-import { uploadToImgBB, processWithAI } from "../../utils/imageUpload";
+import { uploadToImgBB, processWithLeafGuardAI } from "../../utils/imageUpload";
 
 const alata = Alata({
   subsets: ["latin"],
@@ -82,8 +82,8 @@ export default function Leafguard() {
       console.log('Image uploaded successfully:', uploadedImageUrl);
       
       // Step 2: Process with AI service
-      console.log('Processing with AI service...');
-      const aiResult = await processWithAI(uploadedImageUrl, 'leafguard');
+      console.log('Processing with LeafGuard AI service...');
+      const aiResult = await processWithLeafGuardAI(uploadedImageUrl);
       console.log('AI processing result:', aiResult);
       
       // Step 3: Handle the AI response
@@ -97,12 +97,25 @@ export default function Leafguard() {
         }
         
         // Set analysis result from AI
-        const analysisText = aiResult.prediction 
-          ? `Terdeteksi: ${aiResult.prediction}. ${aiResult.description || ''} ${aiResult.recommendation || ''}`
-          : "Analisis berhasil dilakukan. Silakan periksa hasil deteksi.";
+        const analysisText = `
+          🔍 HASIL DETEKSI PENYAKIT DAUN:
+          
+          ${aiResult.prediction ? `Terdeteksi: ${aiResult.prediction}` : 'Tidak terdeteksi penyakit khusus'}
+          
+          ${aiResult.confidence ? `Tingkat Kepercayaan: ${Math.round(aiResult.confidence * 100)}%` : ''}
+          
+          📋 DESKRIPSI:
+          ${aiResult.description}
+          
+          💡 REKOMENDASI:
+          ${aiResult.recommendation}
+        `.trim();
         
         setAnalysisResult(analysisText);
         setIsProcessed(true);
+        
+        // Expand the pull-up panel to show results
+        setPullUpHeight(MAX_HEIGHT);
       } else {
         throw new Error(aiResult.message || 'AI processing failed');
       }
@@ -113,9 +126,14 @@ export default function Leafguard() {
       // Fallback to original behavior if there's an error
       setProcessedImageUrl(previewUrl);
       setAnalysisResult(
-        `Terjadi kesalahan dalam pemrosesan: ${error.message}. Menampilkan gambar asli sebagai fallback.`
+        `❌ TERJADI KESALAHAN:
+        
+        ${error.message}
+        
+        Silakan coba lagi atau periksa koneksi internet Anda. Jika masalah berlanjut, hubungi tim support.`
       );
       setIsProcessed(true);
+      setPullUpHeight(MAX_HEIGHT);
     } finally {
       setIsProcessing(false);
     }

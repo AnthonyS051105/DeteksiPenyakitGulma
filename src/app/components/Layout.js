@@ -5,6 +5,7 @@ import Image from "next/image";
 import "../globals.css";
 import { useState } from "react";
 import { Alata, Agbalumo } from "next/font/google";
+import HealthCheck from "./HealthCheck";
 
 const alata = Alata({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function Layout({ children }) {
 
   return (
     <div className={`min-h-screen bg-[#5CCE8F] ${alata.className}`}>
+      <HealthCheck />
       {/* Navigation */}
       <nav className="relative z-50 bg-[#139186] text-white rounded-bottom-right-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
