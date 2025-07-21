@@ -53,9 +53,9 @@ export default function Fitur() {
                 <p className="mb-4">
                   Fitur NeuraFarm terdiri atas <strong>LeafGuard</strong> dan{" "}
                   <strong>NeuraWeed.</strong> LeafGuard bermanfaat dalam
-                  menemukan penyakit daun pada daun tanaman Anda. Sementara itu,
-                  NeuraWeed mampu menemukan gulma yang mengganggu di sekitar
-                  tanaman Anda.
+                  menemukan dan mengidentifikasi penyakit daun pada daun tanaman
+                  Anda. Sementara itu, NeuraWeed mampu menemukan gulma yang
+                  mengganggu di sekitar tanaman Anda.
                 </p>
                 <p className="mb-4">
                   LeafGuard dikembangkan dalam rangka membantu petani mencegah
