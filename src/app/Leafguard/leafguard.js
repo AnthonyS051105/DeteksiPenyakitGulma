@@ -174,10 +174,12 @@ export default function Leafguard() {
             LeafGuard
           </h1>
           <p className="text-lg text-[#139186] max-w-4xl mx-auto leading-relaxed">
-            LeafGuard yaitu Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit. Pellentesque id sem vel nibh hendrerit pulvinar. In vitae
-            tellus dictum, rhoncus lacus at, rhoncus est. Fusce non dui orci.
-            Vestibulum pharetra at risus rhoncus auctor. Aenean ut nunc velit.
+            LeafGuard merupakan fitur dari NeuraFarm yang menawarkan kemudahan
+            dalam mendeteksi Penyakit Daun dengan Artificial Intellegence.
+            Penyakit Daun berbahaya bagi kehidupan tanaman di sawah, perkebunan,
+            hutan, bahkan kebun kecil di rumah anda. Oleh karena itu, LeafGuard
+            hadir untuk mendeteksi Penyakit Daun di sawah, kebun, hutan, dan
+            taman kecil Anda! LeafGuard, Guard your Leaf!
           </p>
         </div>
 

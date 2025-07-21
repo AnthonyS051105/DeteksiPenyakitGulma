@@ -174,10 +174,11 @@ export default function NeuraWeed() {
             NeuraWeed
           </h1>
           <p className="text-lg text-[#139186] max-w-4xl mx-auto leading-relaxed">
-            NeuraWeed yaitu Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit. Pellentesque id sem vel nibh hendrerit pulvinar. In vitae
-            tellus dictum, rhoncus lacus at, rhoncus est. Fusce non dui orci.
-            Vestibulum pharetra at risus rhoncus auctor. Aenean ut nunc velit.
+            NeuraWeed adalah fitur dari NeuraFarm yang mampu mendeteksi Gulma di
+            sekitar tanaman menggunakan Artificial Intellegence. Gulma akan
+            mengganggu keberlangsungan hidup tanaman-tanaman Anda. Jadi,
+            NeuraWeed hadir untuk mendeteksi dan memudahkan Anda menumpas Gulma
+            di sekitar tanaman anda! NeuraWeed, Wiped out the Weed!
           </p>
         </div>
 

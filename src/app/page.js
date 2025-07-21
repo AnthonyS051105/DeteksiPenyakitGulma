@@ -26,7 +26,7 @@ export default function Home() {
       id: 1,
       title: "Platform untuk Mempermudah Petani Solusi Pertanian Masa Kini.",
       description:
-        "Neurafarm merupakan Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque id sem vel nibh hendrerit pulvinar. In vitae tellus dictum, rhoncus lacus at, rhoncus est. Fusce non dui orci. Vestibulum pharetra at risus rhoncus auctor. Aenean ut nunc velit. Proin maximus lacus a elementum finibus. Donec eget auctor est. Duis efficitur varius lectus, vitae rutrum mi. Aliquam fringilla risus lorem, a efficitur nunc finibus non. Phasellus ac ante vitae velit accumsan finibus ac posuere elit. Proin eget pretium diam. Nam eu tortor a augue auctor suscipit. Curabitur faucibus malesuada fringilla. Mauris scelerisque urna id condimentum ultrices.",
+        "NeuraFarm, platform pertanian yang memudahkan petani-petani  dalam aktivitas mereka di sawah, perkebunan, hutan, bahkan kebun di rumah. NeuraFarm adalah solusi cerdas untuk petani karena menawarkan fitur LeafGuard dan NeuraWeed yang sangat bermanfaat dalam mendeteksi Penyakit Daun dan Gulma di sekitar tanaman! Dengan platform ini, segala kerugian di pertanian dapat dicegah secara lebih dini! NeuraFarm, Solusi Pertanian Masa Kini!",
       format: "jpeg",
     },
     {

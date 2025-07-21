@@ -52,21 +52,22 @@ export default function Fitur() {
               <div className="text-[#139186] text-lg text-justify leading-relaxed">
                 <p className="mb-4">
                   Fitur NeuraFarm terdiri atas <strong>LeafGuard</strong> dan{" "}
-                  <strong>NeuraWeed</strong> yaitu Lorem ipsum dolor sit amet,
-                  consectetur adipiscing elit. Pellentesque id sem vel nibh
-                  hendrerit pulvinar. In vitae tellus dictum, rhoncus lacus at,
-                  rhoncus est. Fusce non dui orci.
+                  <strong>NeuraWeed.</strong> LeafGuard bermanfaat dalam
+                  menemukan penyakit daun pada daun tanaman Anda. Sementara itu,
+                  NeuraWeed mampu menemukan gulma yang mengganggu di sekitar
+                  tanaman Anda.
                 </p>
                 <p className="mb-4">
-                  Vestibulum pharetra at risus rhoncus auctor. Aenean ut nunc
-                  velit. Proin maximus lacus a elementum finibus. Donec eget
-                  auctor est. Duis efficitur varius lectus, vitae rutrum mi.
+                  LeafGuard dikembangkan dalam rangka membantu petani mencegah
+                  komplikasi pada tanaman lebih lanjut akibat dari penyakit
+                  daun. Dengan pendeteksian dini, komplikasi dapat ditangani
+                  lebih cepat dan kehidupan tanaman lebih terjaga!
                 </p>
                 <p>
-                  Aliquam fringilla risus lorem, a efficitur nunc finibus non.
-                  Phasellus ac ante vitae velit accumsan finibus ac posuere
-                  elit. Proin eget pretium diam. Nam eu tortor a augue auctor
-                  suscipit.
+                  NeuraWeed dikembangkan sebagai sarana untuk menumpas
+                  gulma-gulma jahat yang dapat mengganggu tanaman Anda. Dengan
+                  NeuraWeed, kehidupan gulma dapat dikurangi sehingga tanaman
+                  Anda menjadi semakin lebat!
                 </p>
               </div>
             </div>
