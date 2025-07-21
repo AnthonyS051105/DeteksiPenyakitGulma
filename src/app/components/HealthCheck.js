@@ -39,12 +39,25 @@ export default function HealthCheck() {
   }
 
   return (
-    <div className={`fixed top-4 right-4 px-3 py-2 rounded-lg text-sm z-50 ${
+    <div className={`fixed top-4 right-4 px-3 py-2 rounded-lg text-sm z-50 cursor-pointer ${
       healthStatus?.success 
-        ? 'bg-green-100 border border-green-400 text-green-700' 
+        ? healthStatus?.warning
+          ? 'bg-yellow-100 border border-yellow-400 text-yellow-700'
+          : 'bg-green-100 border border-green-400 text-green-700'
         : 'bg-red-100 border border-red-400 text-red-700'
-    }`}>
-      {healthStatus?.success ? '✅ AI Service Online' : `❌ AI Service Offline${healthStatus?.error ? ': ' + healthStatus.error : ''}`}
+    }`}
+    title={healthStatus?.error || healthStatus?.status || 'Click for details'}
+    onClick={() => {
+      if (healthStatus) {
+        alert(`AI Service Status:\n\n${healthStatus.success ? '✅ ' + (healthStatus.status || 'Online') : '❌ Offline: ' + (healthStatus.error || 'Unknown error')}\n\nNote: Even if health check shows issues, the AI processing might still work when you upload images.`);
+      }
+    }}>
+      {healthStatus?.success 
+        ? healthStatus?.warning 
+          ? '⚠️ AI Service (Limited Check)'
+          : '✅ AI Service Online'
+        : '❌ AI Service Offline'
+      }
     </div>
   );
 }
