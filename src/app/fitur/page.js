@@ -1,7 +1,12 @@
 "use client";
 
+import Layout from "../components/Layout";
 import FiturComponent from "./fitur";
 
 export default function FiturPage() {
-  return <FiturComponent />;
+  return (
+    <Layout>
+      <FiturComponent />
+    </Layout>
+  );
 }
