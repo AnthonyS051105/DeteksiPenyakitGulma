@@ -82,7 +82,7 @@ export const processWithLeafGuardAI = async (imageUrl) => {
     console.log("Processing with LeafGuard AI:", imageUrl);
     console.log("AI Service URL:", aiServiceUrl);
 
-    const response = await fetch(`${aiServiceUrl}/predict-disease/upload`, {
+    const response = await fetch(`${aiServiceUrl}/predict-disease/url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -163,7 +163,7 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
     console.log("Processing with NeuraWeed AI:", imageUrl);
     console.log("AI Service URL:", aiServiceUrl);
 
-    const response = await fetch(`${aiServiceUrl}/detect-weed/upload`, {
+    const response = await fetch(`${aiServiceUrl}/detect-weed/url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
