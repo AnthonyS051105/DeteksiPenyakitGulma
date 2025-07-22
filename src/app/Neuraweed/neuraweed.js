@@ -36,8 +36,28 @@ export default function NeuraWeed() {
   const MAX_HEIGHT = 600; // Maximum height (expanded)
   const SNAP_THRESHOLD = 50; // Threshold for snapping
 
+  useEffect(() => {
+    // Cleanup function untuk blob URLs
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      if (processedImageUrl && processedImageUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(processedImageUrl);
+      }
+    };
+  }, [previewUrl, processedImageUrl]);
+
   const handleFileSelect = (file) => {
     if (file && file.type.startsWith("image/")) {
+      // Cleanup previous blob URL
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      if (processedImageUrl && processedImageUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(processedImageUrl);
+      }
+
       setSelectedFile(file);
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
@@ -74,70 +94,64 @@ export default function NeuraWeed() {
     if (!selectedFile) return;
 
     setIsProcessing(true);
-    
+
     try {
       // Step 1: Upload original image to ImgBB
-      console.log('Uploading image to ImgBB...');
+      console.log("Uploading image to ImgBB...");
       const uploadedImageUrl = await uploadToImgBB(selectedFile);
-      console.log('Image uploaded successfully:', uploadedImageUrl);
-      
-      // Step 2: Process with AI service
-      console.log('Processing with NeuraWeed AI service...');
+      console.log("Image uploaded successfully:", uploadedImageUrl);
+
+      // Step 2: Process with NeuraWeed AI service
+      console.log("Processing with NeuraWeed AI service...");
       const aiResult = await processWithNeuraWeedAI(uploadedImageUrl);
-      console.log('AI processing result:', aiResult);
-      
+      console.log("AI processing result:", aiResult);
+
       // Step 3: Handle the AI response
       if (aiResult.success) {
-        // If AI service returns processed image URL, use it
-        if (aiResult.processed_image_url) {
-          setProcessedImageUrl(aiResult.processed_image_url);
-        } else {
-          // Otherwise use the original image
-          setProcessedImageUrl(uploadedImageUrl);
-        }
-        
+        // NeuraWeed always returns processed image URL (from blob)
+        setProcessedImageUrl(aiResult.processed_image_url);
+
         // Set analysis result from AI
         const analysisText = `
-          🌿 HASIL DETEKSI GULMA:
-          
-          ${aiResult.prediction ? `Terdeteksi: ${aiResult.prediction}` : 'Tidak terdeteksi gulma khusus'}
-          
-          ${aiResult.confidence ? `Tingkat Kepercayaan: ${Math.round(aiResult.confidence * 100)}%` : ''}
-          
-          📋 DESKRIPSI:
-          ${aiResult.description}
-          
-          💡 REKOMENDASI:
-          ${aiResult.recommendation}
-        `.trim();
+        🌿 HASIL DETEKSI GULMA:
         
+        ${aiResult.prediction}
+        
+        📋 DESKRIPSI:
+        ${aiResult.description}
+        
+        💡 REKOMENDASI:
+        ${aiResult.recommendation}
+        
+        ℹ️ KETERANGAN:
+        Area yang ditandai dengan kotak merah menunjukkan gulma yang terdeteksi oleh sistem AI.
+      `.trim();
+
         setAnalysisResult(analysisText);
         setIsProcessed(true);
-        
+
         // Expand the pull-up panel to show results
         setPullUpHeight(MAX_HEIGHT);
       } else {
-        throw new Error(aiResult.message || 'AI processing failed');
+        throw new Error(aiResult.message || "AI processing failed");
       }
-      
     } catch (error) {
-      console.error('Processing error:', error);
-      
+      console.error("Processing error:", error);
+
       // Fallback to original behavior if there's an error
       setProcessedImageUrl(previewUrl);
       setAnalysisResult(
         `❌ TERJADI KESALAHAN:
-        
-        ${error.message}
-        
-        Silakan coba lagi atau periksa koneksi internet Anda. Jika masalah berlanjut, hubungi tim support.`
+      
+      ${error.message}
+      
+      Silakan coba lagi atau periksa koneksi internet Anda. Pastikan AI service berjalan dengan baik.`
       );
       setIsProcessed(true);
       setPullUpHeight(MAX_HEIGHT);
     } finally {
       setIsProcessing(false);
     }
-
   };
 
   // Handle mouse events for drag

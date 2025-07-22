@@ -59,7 +59,7 @@ export const uploadToImgBB = async (imageFile) => {
         "Tidak dapat terhubung ke ImgBB. Periksa koneksi internet Anda."
       );
     } else {
-      throw new Error(`ImgBB upload failed: ${error.message}`); 
+      throw new Error(`ImgBB upload failed: ${error.message}`);
     }
   }
 };
@@ -82,8 +82,7 @@ export const processWithLeafGuardAI = async (imageUrl) => {
     console.log("Processing with LeafGuard AI:", imageUrl);
     console.log("AI Service URL:", aiServiceUrl);
 
-  const response = await fetch(`${aiServiceUrl}/predict-disease/url`, {
-
+    const response = await fetch(`${aiServiceUrl}/predict-disease/url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -94,11 +93,7 @@ export const processWithLeafGuardAI = async (imageUrl) => {
       }),
     });
 
-    console.log("AI Service response status:", response.status);
-    console.log(
-      "AI Service response headers:",
-      Object.fromEntries(response.headers.entries())
-    );
+    console.log("LeafGuard AI response status:", response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -161,21 +156,21 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
   }
 
   try {
-    console.log("Processing with NeuraWeed AI:", imageUrl);
+    console.log("Processing with NeuraWeed AI:", imageUrl); // DIPERBAIKI: imageFile.name -> imageUrl
     console.log("AI Service URL:", aiServiceUrl);
 
     const response = await fetch(`${aiServiceUrl}/detect-weed/url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "image/png", // DIPERBAIKI: Endpoint ini mengembalikan gambar, bukan JSON
       },
       body: JSON.stringify({
         image_url: imageUrl,
       }),
     });
 
-    console.log("AI Service response status:", response.status);
+    console.log("NeuraWeed AI response status:", response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -183,27 +178,23 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
       throw new Error(`AI Service error: ${response.status} - ${errorText}`);
     }
 
-    const result = await response.json();
-    console.log("NeuraWeed AI result:", result);
+    // DIPERBAIKI: Handle response sebagai blob/image karena endpoint mengembalikan gambar
+    const imageBlob = await response.blob();
+    console.log("NeuraWeed AI result blob size:", imageBlob.size);
+
+    // Convert blob to URL untuk ditampilkan
+    const processedImageUrl = URL.createObjectURL(imageBlob);
 
     return {
       success: true,
-      prediction:
-        result.prediction ||
-        result.result ||
-        result.class ||
-        "Tidak terdeteksi gulma",
-      confidence: result.confidence || null,
+      prediction: "Deteksi gulma selesai", // Default karena YOLO endpoint tidak return JSON
+      confidence: null,
       description:
-        result.description ||
-        result.message ||
-        "Analisis deteksi gulma telah selesai. Sistem AI telah menganalisis area sekitar tanaman.",
+        "Analisis deteksi gulma telah selesai. Sistem AI telah menganalisis area sekitar tanaman dan menandai gulma yang terdeteksi dengan kotak merah.",
       recommendation:
-        result.recommendation ||
-        result.treatment ||
-        "Silakan lakukan pembersihan gulma jika diperlukan. Gunakan metode yang ramah lingkungan.",
-      processed_image_url: result.processed_image_url || null,
-      raw_result: result,
+        "Silakan periksa area yang ditandai merah untuk pembersihan gulma. Gunakan metode yang ramah lingkungan untuk menghilangkan gulma.",
+      processed_image_url: processedImageUrl, // URL dari blob
+      raw_result: { blob_size: imageBlob.size },
     };
   } catch (error) {
     console.error("NeuraWeed AI processing error:", error);
@@ -297,7 +288,7 @@ export const checkAIServiceHealth = async () => {
       }
       return {
         success: false,
-        error: `Service returned status: '${response.status}`,
+        error: `Service returned status: ${response.status}`,
       };
     } else {
       return {
@@ -333,7 +324,7 @@ export const checkAIServiceHealth = async () => {
       };
     }
 
-    return { success: false, error: `Connection failed: '${error.message}'` };
+    return { success: false, error: `Connection failed: ${error.message}` };
   }
 };
 
@@ -372,6 +363,6 @@ export const testImgBBApiKey = async () => {
       };
     }
   } catch (error) {
-    return { success: false, error: `ImgBB test failed: '${error.message}'` };
+    return { success: false, error: `ImgBB test failed: ${error.message}` };
   }
 };
