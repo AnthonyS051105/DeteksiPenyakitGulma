@@ -59,7 +59,7 @@ export const uploadToImgBB = async (imageFile) => {
         "Tidak dapat terhubung ke ImgBB. Periksa koneksi internet Anda."
       );
     } else {
-      throw new Error(ImgBB upload failed: ${error.message});
+      throw new Error(`ImgBB upload failed: ${error.message}`); 
     }
   }
 };
@@ -82,7 +82,8 @@ export const processWithLeafGuardAI = async (imageUrl) => {
     console.log("Processing with LeafGuard AI:", imageUrl);
     console.log("AI Service URL:", aiServiceUrl);
 
-    const response = await fetch(${aiServiceUrl}/predict-disease/url, {
+  const response = await fetch(`${aiServiceUrl}/predict-disease/url`, {
+
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +103,7 @@ export const processWithLeafGuardAI = async (imageUrl) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI Service error response:", errorText);
-      throw new Error(AI Service error: ${response.status} - ${errorText});
+      throw new Error(`AI Service error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
@@ -140,7 +141,7 @@ export const processWithLeafGuardAI = async (imageUrl) => {
         "CORS error: AI service mungkin tidak mengizinkan akses dari domain ini."
       );
     } else {
-      throw new Error(AI processing failed: ${error.message});
+      throw new Error(`AI processing failed: ${error.message}`);
     }
   }
 };
@@ -163,7 +164,7 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
     console.log("Processing with NeuraWeed AI:", imageUrl);
     console.log("AI Service URL:", aiServiceUrl);
 
-    const response = await fetch(${aiServiceUrl}/detect-weed/url, {
+    const response = await fetch(`${aiServiceUrl}/detect-weed/url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -179,7 +180,7 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI Service error response:", errorText);
-      throw new Error(AI Service error: ${response.status} - ${errorText});
+      throw new Error(`AI Service error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
@@ -217,7 +218,7 @@ export const processWithNeuraWeedAI = async (imageUrl) => {
         "CORS error: AI service mungkin tidak mengizinkan akses dari domain ini."
       );
     } else {
-      throw new Error(AI processing failed: ${error.message});
+      throw new Error(`AI processing failed: ${error.message}`);
     }
   }
 };
@@ -234,7 +235,7 @@ export const processWithAI = async (imageUrl, serviceType) => {
   } else if (serviceType === "neuraweed") {
     return await processWithNeuraWeedAI(imageUrl);
   } else {
-    throw new Error(Unknown service type: ${serviceType});
+    throw new Error(`Unknown service type: ${serviceType}`);
   }
 };
 
@@ -271,7 +272,7 @@ export const checkAIServiceHealth = async () => {
 
   try {
     // Try to check the docs endpoint which should exist
-    const response = await fetch(${aiServiceUrl}/docs, {
+    const response = await fetch(`${aiServiceUrl}/docs`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -287,7 +288,7 @@ export const checkAIServiceHealth = async () => {
       return { success: true, status: "AI service is running and accessible" };
     } else if (response.status === 404) {
       // 404 on /docs might be normal, try root endpoint
-      const rootResponse = await fetch(${aiServiceUrl}/, {
+      const rootResponse = await fetch(`${aiServiceUrl}/`, {
         method: "GET",
         signal: AbortSignal.timeout(5000),
       });
@@ -296,12 +297,12 @@ export const checkAIServiceHealth = async () => {
       }
       return {
         success: false,
-        error: Service returned status: ${response.status},
+        error: `Service returned status: '${response.status}`,
       };
     } else {
       return {
         success: false,
-        error: Service returned status: ${response.status},
+        error: `Service returned status: ${response.status}`,
       };
     }
   } catch (error) {
@@ -332,7 +333,7 @@ export const checkAIServiceHealth = async () => {
       };
     }
 
-    return { success: false, error: Connection failed: ${error.message} };
+    return { success: false, error: `Connection failed: '${error.message}'` };
   }
 };
 
@@ -371,6 +372,6 @@ export const testImgBBApiKey = async () => {
       };
     }
   } catch (error) {
-    return { success: false, error: ImgBB test failed: ${error.message} };
+    return { success: false, error: `ImgBB test failed: '${error.message}'` };
   }
 };
